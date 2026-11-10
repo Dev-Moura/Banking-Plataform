@@ -1,4 +1,4 @@
-# Moura Banking Platform
+# Banking Platform
 
 Plataforma bancária educacional construída com **FastAPI**, **DDD**, **Clean Architecture** e **TDD**.
 
