@@ -20,7 +20,12 @@ def include_module_routers() -> None:
     from banking.modules.audit.presentation.api.routes import router as audit
     from banking.modules.customer.presentation.api.routes import router as customers
     from banking.modules.identity.presentation.api.routes import router as identity
-    from banking.modules.ledger.presentation.api.routes import router as ledger
+    from banking.modules.ledger.presentation.api.routes import (
+        router as ledger,
+    )
+    from banking.modules.ledger.presentation.api.routes import (
+        statement_router as statements,
+    )
     from banking.modules.transaction.presentation.api.routes import (
         router as transactions,
     )
@@ -31,6 +36,7 @@ def include_module_routers() -> None:
         accounts,
         transactions,
         ledger,
+        statements,
         audit,
     ):
         api_router.include_router(module_router, prefix=API_V1_PREFIX)

@@ -19,6 +19,7 @@ from banking.modules.account.application.use_cases.list_accounts import (
 from banking.modules.account.application.use_cases.update_account_status import (
     UpdateAccountStatusUseCase,
 )
+from banking.modules.account.domain.value_objects import AccountStatus
 from banking.modules.account.presentation.api.dependencies import (
     get_balance_use_case,
     get_create_account_use_case,
@@ -81,12 +82,13 @@ async def create_account(
 async def list_accounts(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
-    status_filter: str | None = Query(default=None, alias="status"),
+    status_filter: AccountStatus | None = Query(default=None, alias="status"),
     principal: Principal = Depends(get_current_principal),
     use_case: ListAccountsUseCase = Depends(get_list_accounts_use_case),
 ) -> AccountPageResponse:
     """Lista contas do cliente ou todas para staff."""
-    result = await use_case.execute(principal, status_filter, page, page_size)
+    status = status_filter.value if status_filter is not None else None
+    result = await use_case.execute(principal, status, page, page_size)
     return AccountPageResponse(
         items=[_to_response(item) for item in result.items],
         page=result.page,
