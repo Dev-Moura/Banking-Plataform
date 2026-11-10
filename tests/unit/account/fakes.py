@@ -80,6 +80,20 @@ class FakeAccountRepository:
     async def get_by_id(self, account_id: UUID) -> Account | None:
         return self.accounts.get(account_id)
 
+    async def get_many(self, account_ids: list[UUID]) -> dict[UUID, Account]:
+        return {
+            account_id: self.accounts[account_id]
+            for account_id in account_ids
+            if account_id in self.accounts
+        }
+
+    async def get_many_for_update(self, account_ids: list[UUID]) -> dict[UUID, Account]:
+        return await self.get_many(account_ids)
+
+    async def update_balances(self, accounts: list[Account]) -> None:
+        for account in accounts:
+            self.accounts[account.id] = account
+
     async def list_by_customer(
         self,
         customer_id: UUID,

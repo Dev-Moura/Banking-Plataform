@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from typing import Protocol
 from uuid import UUID
 
@@ -14,6 +15,14 @@ class AccountRepository(Protocol):
     async def add(self, account: Account) -> Account: ...
 
     async def get_by_id(self, account_id: UUID) -> Account | None: ...
+
+    async def get_many(self, account_ids: Sequence[UUID]) -> dict[UUID, Account]: ...
+
+    async def get_many_for_update(
+        self, account_ids: Sequence[UUID]
+    ) -> dict[UUID, Account]: ...
+
+    async def update_balances(self, accounts: Sequence[Account]) -> None: ...
 
     async def list_by_customer(
         self,

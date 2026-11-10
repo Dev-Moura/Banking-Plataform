@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from uuid import UUID
 
 from sqlalchemy import func, select, text
@@ -60,6 +61,41 @@ class SqlAlchemyAccountRepository:
         """Busca conta por identificador."""
         row = await self._session.get(AccountModel, account_id)
         return _to_domain(row) if row is not None else None
+
+    async def get_many(self, account_ids: Sequence[UUID]) -> dict[UUID, Account]:
+        """Carrega contas por identificador."""
+        if not account_ids:
+            return {}
+        result = await self._session.execute(
+            select(AccountModel).where(AccountModel.id.in_(account_ids))
+        )
+        return {row.id: _to_domain(row) for row in result.scalars().all()}
+
+    async def get_many_for_update(
+        self, account_ids: Sequence[UUID]
+    ) -> dict[UUID, Account]:
+        """Carrega e bloqueia contas em ordem determinística."""
+        locked: dict[UUID, Account] = {}
+        for account_id in sorted(set(account_ids)):
+            result = await self._session.execute(
+                select(AccountModel)
+                .where(AccountModel.id == account_id)
+                .with_for_update()
+            )
+            row = result.scalar_one_or_none()
+            if row is not None:
+                locked[row.id] = _to_domain(row)
+        return locked
+
+    async def update_balances(self, accounts: Sequence[Account]) -> None:
+        """Persiste os saldos atualizados."""
+        for account in accounts:
+            row = await self._session.get(AccountModel, account.id)
+            if row is None:
+                continue
+            row.balance = account.balance
+            row.updated_at = account.updated_at
+        await self._session.flush()
 
     async def list_by_customer(
         self,
