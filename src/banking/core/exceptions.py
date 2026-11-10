@@ -19,9 +19,11 @@ class AppError(Exception):
         detail: str | None = None,
         *,
         errors: list[dict[str, Any]] | None = None,
+        headers: dict[str, str] | None = None,
     ) -> None:
         self.detail = detail or self.title
         self.errors = errors or []
+        self.headers = headers or {}
         super().__init__(self.detail)
 
     @property

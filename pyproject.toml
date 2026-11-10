@@ -54,7 +54,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["S101", "ANN201", "ANN001", "ANN202"]
+"tests/**/*.py" = ["S101", "S105", "S106", "ANN201", "ANN001", "ANN202"]
 "migrations/**/*.py" = ["ANN", "N999", "E501"]
 "scripts/cli.py" = ["S603", "S607", "ANN"]
 
