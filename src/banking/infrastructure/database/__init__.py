@@ -1,0 +1,1 @@
+"""Persistência com SQLAlchemy assíncrono."""

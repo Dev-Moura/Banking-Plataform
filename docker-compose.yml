@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: banking
+      POSTGRES_PASSWORD: banking
+      POSTGRES_DB: banking
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U banking -d banking"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - banking_net
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - banking_net
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile
+    environment:
+      APP_ENV: development
+      APP_DEBUG: "false"
+      DATABASE_URL: postgresql+asyncpg://banking:banking@postgres:5432/banking
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: "15"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - banking_net
+
+volumes:
+  postgres_data:
+
+networks:
+  banking_net:
+    driver: bridge

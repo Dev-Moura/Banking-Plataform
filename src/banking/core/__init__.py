@@ -1,0 +1,1 @@
+"""Núcleo transversal da aplicação."""

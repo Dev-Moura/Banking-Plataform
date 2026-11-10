@@ -1,0 +1,1 @@
+"""Componentes compartilhados de aplicação."""

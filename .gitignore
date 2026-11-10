@@ -1,0 +1,37 @@
+# Ambiente
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+
+# Documentação interna de estudo (não versionada conforme especificação)
+docs/
+Banking Platform.docx
+
+# Segredos e credenciais
+secrets/
+credentials/
+private/
+*.pem
+*.key
+*.crt
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# IDEs
+.idea/
+.vscode/
+
+# Artefatos
+dist/
+build/
