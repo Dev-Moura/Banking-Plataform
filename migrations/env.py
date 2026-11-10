@@ -22,6 +22,10 @@ target_metadata = Base.metadata
 
 
 def _database_url() -> str:
+    """Prioriza a URL explícita (testes) e recorre às settings."""
+    configured = config.get_main_option("sqlalchemy.url")
+    if configured:
+        return configured
     return get_settings().database_url
 
 
