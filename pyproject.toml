@@ -1,0 +1,83 @@
+[tool.poetry]
+name = "moura-banking-platform"
+version = "0.1.0"
+description = "Plataforma bancária educacional construída com FastAPI, DDD e Clean Architecture."
+authors = ["Michael Moura <michael@example.com>"]
+readme = "README.md"
+packages = [{ include = "banking", from = "src" }, { include = "scripts" }]
+
+[tool.poetry.dependencies]
+python = ">=3.13,<3.15"
+fastapi = ">=0.115,<1.0"
+uvicorn = { extras = ["standard"], version = ">=0.34,<1.0" }
+pydantic = ">=2.10,<3.0"
+pydantic-settings = ">=2.7,<3.0"
+email-validator = ">=2.2,<3.0"
+sqlalchemy = { extras = ["asyncio"], version = ">=2.0.36,<3.0" }
+asyncpg = ">=0.30,<1.0"
+alembic = ">=1.14,<2.0"
+redis = ">=5.2,<7.0"
+pyjwt = ">=2.10,<3.0"
+argon2-cffi = ">=23.1,<26.0"
+anyio = ">=4.6,<5.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.3,<9.0"
+pytest-asyncio = ">=0.25,<2.0"
+pytest-cov = ">=6.0,<8.0"
+httpx = ">=0.28,<1.0"
+ruff = ">=0.8,<1.0"
+
+[tool.poetry.scripts]
+format = "scripts.cli:format_cmd"
+lint = "scripts.cli:lint_cmd"
+test = "scripts.cli:test_cmd"
+task = "scripts.cli:task_cmd"
+reconcile = "scripts.cli:reconcile_cmd"
+seed = "scripts.cli:seed_cmd"
+
+[build-system]
+requires = ["poetry-core>=2.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "S", "ANN", "N"]
+ignore = [
+    "ANN401",
+    "S101",
+    "B008",
+    "N818",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101", "ANN201", "ANN001", "ANN202"]
+"migrations/**/*.py" = ["ANN", "N999", "E501"]
+"scripts/cli.py" = ["S603", "S607", "ANN"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-ra --strict-markers"
+markers = [
+    "unit: testes de unidade sem infraestrutura externa",
+    "integration: testes que exigem PostgreSQL/Redis reais",
+    "security: testes de segurança e autorização",
+    "contract: testes de contrato da API",
+    "e2e: fluxos completos ponta a ponta",
+]
+
+[tool.coverage.run]
+source = ["src/banking"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
