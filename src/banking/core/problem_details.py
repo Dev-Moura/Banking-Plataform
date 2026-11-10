@@ -62,6 +62,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             type_uri=exc.type_uri,
             detail=exc.detail,
             errors=exc.errors,
+            headers=exc.headers,
         )
 
     @app.exception_handler(RequestValidationError)
